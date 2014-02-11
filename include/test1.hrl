@@ -1,0 +1,2 @@
+-define(SIMPLE_1,1).
+-define(simple_2,2).

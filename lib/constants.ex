@@ -60,7 +60,7 @@ defmodule Quaff.Constants do
   end
   defmacro include_lib(header, options // []) do
     quote do
-      include(unquote(header),unquote(Keyword.put(options,:include_lib,true)))
+      Quaff.Constants.include(unquote(header),unquote(Keyword.put(options,:include_lib,true)))
     end
   end
 
@@ -236,10 +236,4 @@ defmodule Quaff.Constants do
   def mark_keywords([],out) do
     Enum.reverse(out)
   end
-end
- 
-defmodule Quaff.ConstantsCheck do
-  require Quaff.Constants
-
-  Quaff.Constants.include("foo.hrl", export: true)
 end
