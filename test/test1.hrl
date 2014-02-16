@@ -1,0 +1,3 @@
+-define(SIMPLE_1,1).
+-define(simple_2,2).
+-define(MM,?MODULE_STRING).

@@ -4,7 +4,8 @@ defmodule Quaff.Mixfile do
   def project do
     [ app: :quaff,
       version: "0.0.1",
-      deps: deps ]
+      deps: deps,
+    ]
   end
 
   def application do
@@ -12,6 +13,8 @@ defmodule Quaff.Mixfile do
   end
 
   defp deps do
-    [ { :aleppo, git: "https://github.com/ChicagoBoss/aleppo.git", branch: "master" } ]
+    [ { :aleppo, git: "https://github.com/ChicagoBoss/aleppo.git", branch: "master" },
+      { :meck, git: "https://github.com/eproxus/meck.git", branch: "master" }
+    ]
   end
 end

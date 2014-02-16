@@ -1,0 +1,3 @@
+-define(W_ARGS(A,B),(A+B)).
+-define(W_ARGS2(C,D),?W_ARGS(C,1)*?W_ARGS(D,3)).
+-define(USES_ARGS,?W_ARGS2(2,4)).
