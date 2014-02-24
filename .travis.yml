@@ -1,0 +1,14 @@
+language: erlang
+otp_release:
+  - R16B03
+  - R16B02
+  - R16B01
+script:
+  - rebar get-deps
+  - rebar compile
+  - rebar compile
+  - rebar exunit
+  - deps/elixir/bin/mix deps.get
+  - deps/elixir/bin/mix deps.compile
+  - deps/elixir/bin/mix compile
+  - deps/elixir/bin/mix test
