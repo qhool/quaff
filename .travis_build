@@ -1,0 +1,13 @@
+#!/bin/sh
+if [ "${BUILD_TYPE}" = "rebar" ]; then
+    rebar get-deps
+    rebar compile
+    rebar compile
+    rebar exunit
+elif [ "${BUILD_TYPE}" = "mix" ]; then
+    export PATH="${PWD}/elixir/bin:${PATH}"
+    mix deps.get
+    mix deps.compile
+    mix compile
+    mix test
+fi
