@@ -13,8 +13,9 @@ defmodule Quaff.Mixfile do
   end
 
   defp deps do
-    [ { :aleppo, git: "https://github.com/ChicagoBoss/aleppo.git", branch: "master" },
-      { :meck, git: "https://github.com/eproxus/meck.git", branch: "master" }
+    [ { :aleppo, compile: "rebar compile",
+        git: "https://github.com/ChicagoBoss/aleppo.git", branch: "master" },
+      { :meck,  git: "https://github.com/eproxus/meck.git", branch: "master" }
     ]
   end
 end
