@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/qhool/quaff.png?branch=master)](https://travis-ci.org/qhool/quaff)
+
 Quaff
 =====
 
