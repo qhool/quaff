@@ -1,14 +1,29 @@
-{deps,
- [ { elixir, ".*",
-     {git, "git://github.com/elixir-lang/elixir", {branch, "stable"}}},
-   {aleppo, ".*",
-    {git, "https://github.com/ChicagoBoss/aleppo.git", {branch, "master"}}},
-   {meck, ".*",
-    {git, "https://github.com/eproxus/meck.git", {branch, "master"}}},
-   { rebar_elixir_plugin, ".*",
-          {git, "git://github.com/yrashk/rebar_elixir_plugin", {branch, "master"}}}
- ]
-}.
-%% get access to mark_keywords in aleppo
-{plugins, [rebar_elixir_compiler,rebar_exunit]}.
-{lib_dirs, ["deps/elixir/lib"]}.
+ElixirVersion = case os:getenv("ELIXIR_VERSION") of
+                    false -> {branch, "stable"};
+                    V -> V
+                end,
+MainDeps =
+[ { elixir, ".*",
+    {git, "git://github.com/elixir-lang/elixir", ElixirVersion}},
+  {aleppo, ".*",
+   {git, "https://github.com/ChicagoBoss/aleppo.git", {branch, "master"}}},
+  { rebar_elixir_plugin, ".*",
+    {git, "git://github.com/yrashk/rebar_elixir_plugin", {branch, "master"}}}
+],
+Env = case os:getenv("REBAR_ENV") of
+          false -> dev;
+          E -> list_to_atom(E)
+      end,
+Deps = case Env of
+           test ->
+               [ {meck, ".*",
+                  {git, "https://github.com/eproxus/meck.git", {branch, "master"}}} | MainDeps ];
+           _ -> MainDeps
+       end,
+[ {deps, Deps},
+  %% get access to mark_keywords in aleppo
+  {plugins, [rebar_elixir_compiler] ++ case Env of
+                                           test -> [rebar_exunit];
+                                           _ -> []
+                                       end},
+  {lib_dirs, ["deps/elixir/lib"]} ].

@@ -1,10 +1,13 @@
 language: erlang
 otp_release:
+  - R16B03-1
   - R16B03
   - R16B02
   - R16B01
 env:
-  - BUILD_TYPE=rebar
-  - BUILD_TYPE=mix
+  - BUILD_TYPE=rebar REBAR_ENV=test
+  - BUILD_TYPE=mix MIX_ENV=test
+  - BUILD_TYPE=rebar REBAR_ENV=test ELIXIR_VERSION=v0.12.0
+  - BUILD_TYPE=mix MIX_ENV=test ELIXIR_VERSION=v0.12.0
 install: "./.travis_install"
 script: "./.travis_build"
