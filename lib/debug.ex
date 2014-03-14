@@ -34,7 +34,12 @@ defmodule Quaff.Debug do
         call_i(src,options)
     end
   end
-  def nload(module, options // []) do
+
+  def nload(module) do
+    nload(module,[])
+  end
+
+  def nload(module, options) do
     load(module,Keyword.put(options,:all_nodes,true))
   end
 

@@ -24,7 +24,13 @@ defmodule Quaff.Constants do
     end
   end
 
-  defmacro include(header, options // []) do
+  defmacro include(header) do
+    quote do
+      Quaff.Constants.include(unquote(header),[])
+    end
+  end
+
+  defmacro include(header, options) do
     use_constants = options[:constants] || :all
     do_export = options[:export] || false
     in_module = options[:module] || Macro.expand(quote do __MODULE__ end,__CALLER__)
@@ -71,7 +77,13 @@ defmodule Quaff.Constants do
     attrs ++ funs
   end
 
-  defmacro include_lib(header, options // []) do
+  defmacro include_lib(header) do
+    quote do
+      Quaff.Constants.include_lib(unquote(header),[])
+    end
+  end
+
+  defmacro include_lib(header, options) do
     quote do
       Quaff.Constants.include(unquote(header),unquote(Keyword.put(options,:include_lib,true)))
     end
@@ -90,7 +102,11 @@ defmodule Quaff.Constants do
     binary_to_atom(normed_str)
   end
 
-  def get_constants(header_file,options // []) do
+  def get_constants(header_file) do
+    get_constants(header_file,[])
+  end
+
+  def get_constants(header_file,options) do
     incl_type = case options[:include_lib] do
                   true -> :macro_include_lib
                   _ -> :macro_include
@@ -208,8 +224,9 @@ defmodule Quaff.Constants do
   defp resolve_include(:macro_include,file,rel,incl_path) do
     resolve_include(file,rel,incl_path)
   end
+
   defp resolve_include("$"<>incl,rel,incl_path) do
-    [_,var_name,suff] = Regex.run( %r/(\w+)(.*)$/, incl )
+    [_,var_name,suff] = Regex.run( Regex.compile!("(\w+)(.*)$"), incl )
     resolve_include((System.get_env(var_name)||"")<>suff,rel,incl_path)
   end
   defp resolve_include(("/"<>_)=abs_file,_,_) do

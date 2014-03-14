@@ -52,11 +52,15 @@ defmodule Quaff.Debug.Test do
   @tag :int
   test "interpret module" do
     Dbg.load(Quaff.Constants)
+    ex_pat = Regex.compile!("constants\.ex$")
+    beam_pat = Regex.compile!("Elixir\.Quaff\.Constants\.beam$")
     assert called_pattern(:int,:i,
                           fn([{Quaff.Constants,src,beam,bb}])
                             when is_binary(bb) ->
-                              Regex.match?(%r/constants\.ex$/, src) and
-                              Regex.match?(%r/Elixir\.Quaff\.Constants\.beam$/, beam)
+                              Regex.match?(ex_pat,
+                                           list_to_bitstring(src)) and
+                              Regex.match?(beam_pat,
+                                           list_to_bitstring(beam))
                             (_) -> false
                           end)
     assert :meck.validate(:int)
@@ -84,7 +88,7 @@ defmodule Quaff.Debug.Test do
     case Enum.reduce( hist, {[],false},
                       fn(_,{_,true}) ->
                           {nil,true}
-                        ({_pid,{^mod,^f,args},_res},{checked,false}) ->
+                        ({_pid,{mod1,f1,args},_res},{checked,false}) when mod1 == mod and f1 == f ->
                           case scanner.(args) do
                             true -> {nil,true}
                             _ -> {[args|checked],false}
