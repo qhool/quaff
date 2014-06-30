@@ -12,15 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 defmodule Quaff.Constants do
+  require Record
 
-  defexception CompileError, [:file, :line, :message] do
+  defmodule CompileError do
+    defexception message: nil
+
     def exception(opts) do
       file = opts[:file] || "<unknown file>"
       line = opts[:line] || -1
       msg = opts[:message] ||
       String.from_char_list!(:io_lib.format( opts[:format], opts[:items] ))
       msg = msg <> String.from_char_list!(:io_lib.format( "~n  at ~s line ~p", [file,line] ))
-      CompileError[ message: msg, file: file, line: line ]
+      %__MODULE__{message: msg}
     end
   end
 
@@ -65,7 +68,7 @@ defmodule Quaff.Constants do
           Enum.map( const,
                     fn({c,_}) ->
                         {:ok,ident} =
-                          Code.string_to_quoted(atom_to_binary(c))
+                          Code.string_to_quoted(Atom.to_string(c))
                         quote do
                           def unquote(ident) do
                             @unquote(ident)
@@ -90,7 +93,7 @@ defmodule Quaff.Constants do
   end
 
   defp normalize_const(a) when is_atom(a) do
-    normalize_const(atom_to_binary(a))
+    normalize_const(Atom.to_string(a))
   end
   defp normalize_const(name) do
     c = String.first(name)
@@ -99,7 +102,7 @@ defmodule Quaff.Constants do
         ^c -> "_"<>name
         _ -> name
       end
-    binary_to_atom(normed_str)
+    String.to_atom(normed_str)
   end
 
   def get_constants(header_file) do
@@ -160,7 +163,7 @@ defmodule Quaff.Constants do
     Enum.any?(ls,&has_funs?/1)
   end
   defp has_funs?(t) when is_tuple(t) do
-    has_funs?(tuple_to_list(t))
+    has_funs?(Tuple.to_list(t))
   end
   defp has_funs?(_) do
     false
@@ -214,11 +217,11 @@ defmodule Quaff.Constants do
   end
   defp resolve_include(:macro_include_lib,file,_,_) do
     [app_name|file_path] = :filename.split(String.to_char_list!(file))
-    case :code.lib_dir(list_to_atom(app_name)) do
+    case :code.lib_dir(List.to_atom(app_name)) do
       {:error, _} ->
         {:error, {:not_found,file}}
       app_lib ->
-        {:ok,iolist_to_binary(:filename.join([app_lib|file_path]))}
+        {:ok,List.to_string(:filename.join([app_lib|file_path]))}
     end
   end
   defp resolve_include(:macro_include,file,rel,incl_path) do
@@ -260,7 +263,7 @@ defmodule Quaff.Constants do
     #last ditch effort
     case :code.where_is_file(String.to_char_list!(file)) do
           :non_existing -> {:error, {:not_found,file}}
-          filename -> {:ok, iolist_to_binary(filename)}
+          filename -> {:ok, List.to_string(filename)}
     end
   end
 
@@ -362,7 +365,7 @@ defmodule Quaff.Constants do
   end
   defp mark_keywords([{:"-",{_,1}}=dash,{:atom,loc,kw}|tokens],out)
   when kw in [:define,:ifdef,:ifndef,:"else",:endif,:undef,:include,:include_lib] do
-    keyword = binary_to_atom(atom_to_binary(kw)<>"_keyword")
+    keyword = String.to_atom(Atom.to_string(kw)<>"_keyword")
     mark_keywords(tokens, [{keyword,loc},dash|out])
   end
   defp mark_keywords([tok|tokens],out) do
@@ -372,7 +375,7 @@ defmodule Quaff.Constants do
     Enum.reverse(out)
   end
 
-  defrecordp :qc_ctx, [:defs, :files, :relative_dirs, :includes]
+  Record.defrecordp :qc_ctx, [:defs, :files, :relative_dirs, :includes]
 
   ## defs dictionary:
   defp init_ctx() do
@@ -380,7 +383,7 @@ defmodule Quaff.Constants do
   end
   defp init_ctx(module,file,incls) do
     defs = [{ {:MODULE,0},{[],[{:atom,{1,1},module}]} },
-            { {:MODULE_STRING,0},{[],[{:string,{1,1},atom_to_list(module)}]} }]
+            { {:MODULE_STRING,0},{[],[{:string,{1,1},Atom.to_char_list(module)}]} }]
     ctx = qc_ctx(init_ctx(),includes: incls)
     put_defs( push_file(ctx, file), defs )
   end
