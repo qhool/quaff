@@ -15,16 +15,9 @@ defmodule Quaff.Debug.Test do
       :meck.expect(:int,:i,fn(_) -> :ok end)
       :meck.expect(:int,:ni,fn(_) -> :ok end)
     end
-    :ok
-  end
-
-  teardown context do
-    if context[:debugger] do
-      :meck.unload(:debugger)
-    end
-    if context[:int] do
-      :meck.unload(:int)
-    end
+    on_exit(context,fn() ->
+                        :meck.unload()
+                    end)
     :ok
   end
 
@@ -58,9 +51,9 @@ defmodule Quaff.Debug.Test do
                           fn([{Quaff.Constants,src,beam,bb}])
                             when is_binary(bb) ->
                               Regex.match?(ex_pat,
-                                           list_to_bitstring(src)) and
+                                           List.to_string(src)) and
                               Regex.match?(beam_pat,
-                                           list_to_bitstring(beam))
+                                           List.to_string(beam))
                             (_) -> false
                           end)
     assert :meck.validate(:int)
