@@ -190,7 +190,7 @@ defmodule Quaff.Constants do
                  items: [realfile,reason],
                  file: from_file, line: from_line )
       end
-    {:ok,contents} = String.to_char_list(contents)
+    contents = String.to_char_list(contents)
     {:ok,h_toks,_} = :erl_scan.string(contents,{1,1})
     tokens = mark_keywords(h_toks)
     {:ok, toks} = :aleppo_parser.parse(tokens)
@@ -213,10 +213,10 @@ defmodule Quaff.Constants do
   end
 
   defp resolve_include(incl_type,file,rel,incl_path) when is_list(file) do
-    resolve_include(incl_type,String.from_char_list!(file),rel,incl_path)
+    resolve_include(incl_type,List.to_string(file),rel,incl_path)
   end
   defp resolve_include(:macro_include_lib,file,_,_) do
-    [app_name|file_path] = :filename.split(String.to_char_list!(file))
+    [app_name|file_path] = :filename.split(String.to_char_list(file))
     case :code.lib_dir(List.to_atom(app_name)) do
       {:error, _} ->
         {:error, {:not_found,file}}
@@ -261,7 +261,7 @@ defmodule Quaff.Constants do
   end
   defp resolve_include(file,[]) do
     #last ditch effort
-    case :code.where_is_file(String.to_char_list!(file)) do
+    case :code.where_is_file(String.to_char_list(file)) do
           :non_existing -> {:error, {:not_found,file}}
           filename -> {:ok, List.to_string(filename)}
     end
@@ -287,11 +287,11 @@ defmodule Quaff.Constants do
   end
   defp expand_nested([{:macro,{_,_,name},args}|tokens], acc, ctx) do
     {arg_names,def_toks} = get_def(ctx,{name,length(args)})
-    arg_mapping = ListDict.new(List.zip([arg_names,args]))
+    arg_mapping = List.zip([arg_names,args])
     filled_in =
       Enum.flat_map(def_toks,
                     fn({:var,_,varname}=tok) ->
-                        case Dict.get(arg_mapping,varname) do
+                        case Keyword.get(arg_mapping,varname) do
                           nil -> [tok]
                           replacement -> replacement
                         end
