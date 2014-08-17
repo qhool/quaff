@@ -19,7 +19,7 @@ defmodule Quaff.Debug do
     load(module,[])
   end
   def load(module, options) when is_atom(module) do
-    case atom_to_binary(module) do
+    case Atom.to_string(module) do
       "Elixir."<>_ ->
         load_ex(module,options)
       _ ->
@@ -57,7 +57,7 @@ defmodule Quaff.Debug do
     Enum.map(mods,
              fn({mod,beam_bin}) ->
                  call_i({mod,String.to_char_list!(src),
-                         atom_to_list(mod)++'.beam',beam_bin},options)
+                         Atom.to_char_list(mod)++'.beam',beam_bin},options)
              end)
   end
   defp call_i(arg,options) do
