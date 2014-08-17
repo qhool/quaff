@@ -8,7 +8,7 @@ MainDeps =
   {aleppo, ".*",
    {git, "https://github.com/ChicagoBoss/aleppo.git", {branch, "master"}}},
   { rebar_elixir_plugin, ".*",
-    {git, "git://github.com/yrashk/rebar_elixir_plugin", {branch, "master"}}}
+    {git, "git://github.com/qhool/rebar_elixir_plugin", {branch, "elixir_0.15"}}}
 ],
 Env = case os:getenv("REBAR_ENV") of
           false -> dev;
