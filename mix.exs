@@ -17,8 +17,9 @@ defmodule Quaff.Mixfile do
         deps(:prod) ]
   end
   defp deps(_) do
-    [ { :aleppo, compile: "rebar compile",
-        git: "https://github.com/ChicagoBoss/aleppo.git", branch: "master" },
+    [ { :aleppo,
+        git: "https://github.com/ChicagoBoss/aleppo.git", branch: "master",
+        tag: "v0.8.14"},
     ]
   end
 end
