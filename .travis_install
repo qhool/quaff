@@ -1,7 +1,0 @@
-#!/bin/sh
-if [ "${BUILD_TYPE}" = "mix" ]; then
-   git clone --branch ${ELIXIR_VERSION:-stable} git://github.com/elixir-lang/elixir
-   cd elixir
-   make
-   cd ..
-fi

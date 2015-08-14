@@ -1,0 +1,2 @@
+defmodule Quaff do
+end

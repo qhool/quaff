@@ -1,0 +1,2 @@
+%{"aleppo": {:git, "git://github.com/ChicagoBoss/aleppo.git", "d64056219e248f24314dbbd08e3acb636e4f4b81", [branch: "master"]},
+  "meck": {:hex, :meck, "0.8.3"}}
