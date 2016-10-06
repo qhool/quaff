@@ -21,8 +21,8 @@ defmodule Quaff.Constants do
       file = opts[:file] || "<unknown file>"
       line = opts[:line] || -1
       msg = opts[:message] ||
-      String.from_char_list!(:io_lib.format( opts[:format], opts[:items] ))
-      msg = msg <> String.from_char_list!(:io_lib.format( "~n  at ~s line ~p", [file,line] ))
+      List.to_string(:io_lib.format( opts[:format], opts[:items] ))
+      msg = msg <> List.to_string(:io_lib.format( "~n  at ~s line ~p", [file,line] ))
       %__MODULE__{message: msg}
     end
   end
