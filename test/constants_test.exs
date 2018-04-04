@@ -16,7 +16,13 @@ defmodule Quaff.Constants.Test do
   #these files include others:
   C.include_lib("snmp/include/snmp_tables.hrl")
   C.include_lib("inets/include/httpd.hrl")
+  #C.include_lib("/public_key.hrl")
   C.include_lib("public_key/include/public_key.hrl")
+
+  C.include_lib("more_test.hrl", relative_to: "../include", include: ["./"])
+
+
+
 
   test "simple constants" do
     assert @_SIMPLE_1 == 1

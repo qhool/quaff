@@ -37,9 +37,25 @@ defmodule Quaff.Constants do
     use_constants = options[:constants] || :all
     do_export = options[:export] || false
     in_module = options[:module] || Macro.expand(quote do __MODULE__ end,__CALLER__)
-    in_dir = options[:relative_to] || Macro.expand(quote do __DIR__ end, __CALLER__)
+    rel_dir =
+      cond do
+        options[:relative_to] && :ok == Macro.validate(options[:relative_to]) ->
+          {rel_to, []} = options[:relative_to] |> Code.eval_quoted([], __CALLER__)
+          rel_to
+        options[:relative_to] -> options[:relative_to]
+        true -> Macro.expand(quote do __DIR__ end, __CALLER__)
+      end
+    inc_dir =
+      cond do
+        options[:include] && :ok == Macro.validate(options[:include]) ->
+          {inc, []} = options[:include] |> Code.eval_quoted([], __CALLER__)
+          inc
+        options[:include] -> options[:include]
+        true -> [Macro.expand(quote do __DIR__ end, __CALLER__)]
+      end
     options = Keyword.put(options, :module, in_module)
-    options = Keyword.put(options, :relative_to, in_dir)
+    options = Keyword.put(options, :relative_to, rel_dir)
+    options = Keyword.put(options, :include, inc_dir)
     const = Enum.map(get_constants(header,options),
                      fn({c,v}) ->
                          {normalize_const(c),v}
@@ -87,9 +103,9 @@ defmodule Quaff.Constants do
   end
 
   defmacro include_lib(header, options) do
-    opts = Macro.expand(options, __CALLER__)
-    opts = Keyword.put(opts, :include_lib, true)
-    IO.inspect(opts)
+    opts = options |>
+            Macro.expand_once(__CALLER__) |>
+            Keyword.put(:include_lib, true)
     quote do
       Quaff.Constants.include(unquote(header), unquote(opts))
     end
@@ -177,6 +193,9 @@ defmodule Quaff.Constants do
                                 include_path: include_path,
                                 from_file: from_file,
                                 from_line: from_line ) do
+
+    IO.puts("calling resolve_included(#{incl_type}, #{header_file}, #{relative_dir}, #{include_path})")
+
     {:ok,realfile} =
       case resolve_include(incl_type,header_file,relative_dir,include_path) do
         {:ok,_} = res -> res
@@ -243,6 +262,14 @@ defmodule Quaff.Constants do
     end
   end
   defp resolve_include(file,relative_to,include_path) when is_binary(relative_to) do
+    IO.puts("resolving relative file")
+
+    IO.puts("file")
+    IO.inspect(file)
+    IO.puts("relative_to")
+    IO.inspect(relative_to)
+
+
     unrelative = Path.expand(file,relative_to)
     case File.exists?(unrelative) do
       true -> {:ok, unrelative}
