@@ -56,8 +56,8 @@ defmodule Quaff.Debug do
     mods = Code.load_file(src)
     Enum.map(mods,
              fn({mod,beam_bin}) ->
-                 call_i({mod,String.to_char_list(src),
-                         Atom.to_char_list(mod)++'.beam',beam_bin},options)
+                 call_i({mod,String.to_charlist(src),
+                         Atom.to_charlist(mod)++'.beam',beam_bin},options)
              end)
   end
   defp call_i(arg,options) do

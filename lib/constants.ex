@@ -50,7 +50,7 @@ defmodule Quaff.Constants do
                 Enum.map(List.wrap(use_constants),
                               fn(c) ->
                                   c = normalize_const(c)
-                                  {c,Dict.fetch!(const,c)}
+                                  {c,Keyword.fetch!(const,c)}
                               end
                         )
             end
@@ -129,7 +129,7 @@ defmodule Quaff.Constants do
     defs = find_defns(tree,ctx)
     Enum.flat_map(defs,
                   fn({macro,all_arity}) ->
-                      case Dict.get(all_arity,0) do
+                      case Map.get(all_arity,0) do
                         nil -> []
                         {[],defn} ->
                           case parse_constant(defn) do
@@ -190,7 +190,7 @@ defmodule Quaff.Constants do
                  items: [realfile,reason],
                  file: from_file, line: from_line )
       end
-    contents = String.to_char_list(contents)
+    contents = String.to_charlist(contents)
     {:ok,h_toks,_} = :erl_scan.string(contents,{1,1})
     tokens = mark_keywords(h_toks)
     {:ok, toks} = :aleppo_parser.parse(tokens)
@@ -216,7 +216,7 @@ defmodule Quaff.Constants do
     resolve_include(incl_type,List.to_string(file),rel,incl_path)
   end
   defp resolve_include(:macro_include_lib,file,_,_) do
-    [app_name|file_path] = :filename.split(String.to_char_list(file))
+    [app_name|file_path] = :filename.split(String.to_charlist(file))
     case :code.lib_dir(List.to_atom(app_name)) do
       {:error, _} ->
         {:error, {:not_found,file}}
@@ -261,7 +261,7 @@ defmodule Quaff.Constants do
   end
   defp resolve_include(file,[]) do
     #last ditch effort
-    case :code.where_is_file(String.to_char_list(file)) do
+    case :code.where_is_file(String.to_charlist(file)) do
           :non_existing -> {:error, {:not_found,file}}
           filename -> {:ok, List.to_string(filename)}
     end
@@ -379,11 +379,11 @@ defmodule Quaff.Constants do
 
   ## defs dictionary:
   defp init_ctx() do
-    qc_ctx( defs: HashDict.new(), files: [], relative_dirs: [], includes: [] )
+    qc_ctx( defs: Map.new(), files: [], relative_dirs: [], includes: [] )
   end
   defp init_ctx(module,file,incls) do
     defs = [{ {:MODULE,0},{[],[{:atom,{1,1},module}]} },
-            { {:MODULE_STRING,0},{[],[{:string,{1,1},Atom.to_char_list(module)}]} }]
+            { {:MODULE_STRING,0},{[],[{:string,{1,1},Atom.to_charlist(module)}]} }]
     ctx = qc_ctx(init_ctx(),includes: incls)
     put_defs( push_file(ctx, file), defs )
   end
@@ -415,12 +415,12 @@ defmodule Quaff.Constants do
   end
 
   defp get_def(qc_ctx( defs: defs ),{name,arity}) do
-    all_arity = Dict.fetch!(defs,name)
-    Dict.fetch!(all_arity,arity)
+    all_arity = Map.fetch!(defs,name)
+    Map.fetch!(all_arity,arity)
   end
 
   defp defs_list(qc_ctx(defs: defs)) do
-    Dict.to_list(defs)
+    Map.to_list(defs)
   end
 
   defp put_defs( ctx, defs ) when is_list(defs) do
@@ -429,19 +429,19 @@ defmodule Quaff.Constants do
 
   defp put_def( qc_ctx( defs: defs )=ctx,{name,arity},defn) do
     all_arity =
-      case Dict.get(defs,name) do
-        nil -> HashDict.new()
+      case Map.get(defs,name) do
+        nil -> Map.new()
         aa -> aa
       end
-    qc_ctx(ctx, defs: Dict.put(defs,name,Dict.put(all_arity,arity,defn)))
+    qc_ctx(ctx, defs: Map.put(defs,name,Map.put(all_arity,arity,defn)))
   end
 
   defp has_def?(qc_ctx(defs: defs),name) do
-    Dict.has_key?(defs,name)
+    Map.has_key?(defs,name)
   end
 
   defp rm_def(qc_ctx(defs: defs)=ctx,name) do
-    qc_ctx(ctx, defs: Dict.delete(defs,name))
+    qc_ctx(ctx, defs: Map.delete(defs,name))
   end
 
 end
