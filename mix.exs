@@ -2,8 +2,10 @@ defmodule Quaff.Mixfile do
   use Mix.Project
 
   def project do
-    [ app: :quaff,
-      version: "0.0.1",
+    [
+      app: :quaff,
+      elixir: "~> 1.6",
+      version: "0.0.2",
       deps: deps(Mix.env)
     ]
   end
@@ -13,10 +15,10 @@ defmodule Quaff.Mixfile do
   end
 
   defp deps(:test) do
-    [ { :meck,  git: "https://github.com/eproxus/meck.git", branch: "master" } |
-        deps(:prod) ]
+    [{:meck, "~> 0.8.9"}] ++ deps(:prod)
   end
+
   defp deps(_) do
-    [{:aleppo, git: "https://github.com/ChicagoBoss/aleppo.git", tag: "v0.9"}]
+    [{:aleppo, "~> 0.9.0"}]
   end
 end
