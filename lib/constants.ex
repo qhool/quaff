@@ -38,8 +38,8 @@ defmodule Quaff.Constants do
     do_export = options[:export] || false
     in_module = options[:module] || Macro.expand(quote do __MODULE__ end,__CALLER__)
     in_dir = options[:relative_to] || Macro.expand(quote do __DIR__ end, __CALLER__)
-    options = Keyword.put(options,:module,in_module)
-    options = Keyword.put(options,:relative_to,in_dir)
+    options = Keyword.put(options, :module, in_module)
+    options = Keyword.put(options, :relative_to, in_dir)
     const = Enum.map(get_constants(header,options),
                      fn({c,v}) ->
                          {normalize_const(c),v}
@@ -87,8 +87,11 @@ defmodule Quaff.Constants do
   end
 
   defmacro include_lib(header, options) do
+    opts = Macro.expand(options, __CALLER__)
+    opts = Keyword.put(opts, :include_lib, true)
+    IO.inspect(opts)
     quote do
-      Quaff.Constants.include(unquote(header),unquote(Keyword.put(options,:include_lib,true)))
+      Quaff.Constants.include(unquote(header), unquote(opts))
     end
   end
 
