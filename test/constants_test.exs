@@ -19,15 +19,22 @@ defmodule Quaff.Constants.Test do
   #C.include_lib("/public_key.hrl")
   C.include_lib("public_key/include/public_key.hrl")
 
-  C.include_lib("more_test.hrl", relative_to: "../include", include: ["./"])
-  C.include_lib("more_test.hrl", include: ["../include"])
-
+  #relative paths
+  C.include_lib(Path.expand("#{__DIR__}/../include/more_test.hrl"))
+  C.include_lib("../include/more_test.hrl")
+  C.include_lib("./test1.hrl")
 
 
 
   test "simple constants" do
     assert @_SIMPLE_1 == 1
     assert @simple_2 == 2
+    assert @_MM == 'Elixir.Quaff.Constants.Test'
+  end
+
+  test "dynamic path constants" do
+    assert @_SIMPLE_3 == 3
+    assert @simple_4 == 4
     assert @_MM == 'Elixir.Quaff.Constants.Test'
   end
 
