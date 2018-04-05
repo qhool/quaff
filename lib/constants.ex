@@ -242,6 +242,14 @@ defmodule Quaff.Constants do
     resolve_include(incl_type,List.to_string(file),rel,incl_path)
   end
 
+  defp resolve_include(:macro_include_lib, (c <>":/"<>_)=abs_file,_,_) when c in ["c","d", "e", "f"] do
+    case File.exists?(abs_file) do
+      true -> {:ok, abs_file}
+      _ ->
+        {:error, {:not_found,abs_file}}
+    end
+  end
+
   defp resolve_include(:macro_include_lib, ("/"<>_)=abs_file,_,_) do
     case File.exists?(abs_file) do
       true -> {:ok, abs_file}
