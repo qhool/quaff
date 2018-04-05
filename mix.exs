@@ -23,7 +23,8 @@ defmodule Quaff.Mixfile do
   end
 
   defp deps(_) do
-    [{:aleppo, "~> 0.9.0"}]
+    [{:aleppo, "~> 0.9.0"},
+      {:ex_doc, ">= 0.0.0", only: :dev}]
   end
 
   def package do
