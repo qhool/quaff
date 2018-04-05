@@ -6,7 +6,11 @@ defmodule Quaff.Mixfile do
       app: :quaff,
       elixir: "~> 1.6",
       version: "0.0.2",
-      deps: deps(Mix.env)
+      deps: deps(Mix.env),
+      description: "Quaff is a set of tools for integrating Elixir into erlang applications (or vice versa).",
+      package: package(),
+      source_url: "https://github.com/aruki-delivery/quaff",
+      homepage_url: "https://hex.pm/packages/quaff"
     ]
   end
 
@@ -20,5 +24,11 @@ defmodule Quaff.Mixfile do
 
   defp deps(_) do
     [{:aleppo, "~> 0.9.0"}]
+  end
+
+  def package do
+    [ maintainers: ["cblage"],
+      licenses: ["Apache License 2.0"],
+      links: %{"GitHub" => "https://github.com/aruki-delivery/quaff" } ]
   end
 end
