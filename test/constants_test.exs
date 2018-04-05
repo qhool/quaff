@@ -20,6 +20,7 @@ defmodule Quaff.Constants.Test do
   C.include_lib("public_key/include/public_key.hrl")
 
   C.include_lib("more_test.hrl", relative_to: "../include", include: ["./"])
+  C.include_lib("more_test.hrl", include: ["../include"])
 
 
 
