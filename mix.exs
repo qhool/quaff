@@ -5,7 +5,7 @@ defmodule Quaff.Mixfile do
     [
       app: :quaff,
       elixir: "~> 1.6",
-      version: "0.0.2",
+      version: "0.1.0",
       deps: deps(Mix.env),
       description: "Quaff is a set of tools for integrating Elixir into erlang applications (or vice versa).",
       package: package(),

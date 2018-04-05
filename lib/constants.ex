@@ -200,8 +200,6 @@ defmodule Quaff.Constants do
                                 include_path: include_path,
                                 from_file: from_file,
                                 from_line: from_line ) do
-
-    IO.puts("calling resolve_include(#{incl_type}, #{header_file}, #{relative_dir}, #{include_path})")
     {:ok,realfile} =
       case resolve_include(incl_type,header_file,relative_dir,include_path) do
         {:ok,_} = res -> res
