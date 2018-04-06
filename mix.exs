@@ -1,4 +1,4 @@
-defmodule Quaff_012.Mixfile do
+defmodule Quaff_013.Mixfile do
   use Mix.Project
 
 
@@ -7,7 +7,7 @@ defmodule Quaff_012.Mixfile do
     [
       app: :quaff,
       elixir: "~> 1.6",
-      version: "0.1.2",
+      version: "0.1.3",
       deps: deps(Mix.env()),
       elixirc_options: elixirc_defaults ++ options(Mix.env()),
       dialyzer: [paths: ["_build/shared/lib/mqttex/ebin"]],

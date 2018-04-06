@@ -1,7 +1,7 @@
 Expm.Package.new(
   name: "quaff",
   description: "Quaff is a set of tools for integrating Elixir into erlang applications (or vice versa).",
-  version: "0.1.2",
+  version: "0.1.3",
   keywords: ["Elixir", "erlang", "tools", "utilities"],
   licenses: [[name: "Apache License 2.0"]],
   maintainers: [
