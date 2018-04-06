@@ -5,6 +5,23 @@ Quaff
 
 Quaff is a set of tools for integrating Elixir into erlang applications (or vice versa).
 
+All contributions are welcome.
+
+Installation
+=====
+
+Using [https://hex.pm/packages/quaff](hex.pm) (recommended way)
+
+Simply add ```{:quaff, "~> 0.1"}``` to your project's ```mix.exs``` file, in the dependencies list and run ```mix deps.get quaff```.
+
+### Example
+```elixir
+defp deps do
+  [{:quaff, "~> 0.1"},]
+end
+```
+
+
 Quaff.Constants
 ---------------
 

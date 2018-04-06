@@ -1,6 +1,0 @@
-{application,quaff,
- [
-  { description, "Quaff the Elixir" },
-  { vsn, "0.0.1" },
-  { modules, [ 'Elixir.Quaff.Constants' ] }
-] }.
