@@ -1,13 +1,21 @@
-# Used by "mix format" and to export configuration.
-export_locals_without_parens = [
-  run: 1,
-  run: 2,
-  activity: 1,
-  activity: 2
-]
-
 [
-  inputs: ["{mix,.formatter,.json}.exs", "{config,lib,test}/**/*.{ex,exs}"],
-  locals_without_parens: export_locals_without_parens,
-  export: [locals_without_parens: export_locals_without_parens]
+  inputs: [
+    "lib/*/{lib,unicode,test}/**/*.{ex,exs}",
+    "lib/*/mix.exs"
+  ],
+
+  locals_without_parens: [
+    # Formatter tests
+    assert_format: 2,
+    assert_format: 3,
+    assert_same: 1,
+    assert_same: 2,
+
+    # Errors tests
+    assert_eval_raise: 3,
+
+    # Mix tests
+    in_fixture: 2,
+    in_tmp: 2
+  ]
 ]
