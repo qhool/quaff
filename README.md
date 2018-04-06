@@ -24,7 +24,7 @@ end
 ```
 
 
-Quaff.Constants
+Quaff
 ---------------
 
 This module parses erlang header files, and imports any constants as `@` attributes. A constant means a `-define` macro which evaluates to a constant term, and takes no arguments (though it may use macros which accept arguments).  Constants whose names start with a capital letter will have an underscore prepended, for compatibility with Elixir syntax.
