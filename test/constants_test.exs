@@ -20,7 +20,8 @@ defmodule Quaff.Constants.Test do
   C.include_lib("public_key/include/public_key.hrl")
 
   #relative paths
-  C.include_lib(Path.expand("#{__DIR__}/../include/more_test.hrl"))
+  C.include_lib(Path.expand("#{__DIR__}/../include/more_test.hrl"),
+    include: Path.expand("#{__DIR__}/../include/"))
   C.include_lib("../include/more_test.hrl")
   C.include_lib("./test1.hrl")
 

@@ -239,26 +239,12 @@ defmodule Quaff.Constants do
                                    end))
   end
 
+
   defp resolve_include(incl_type,file,rel,incl_path) when is_list(file) do
     resolve_include(incl_type,List.to_string(file),rel,incl_path)
   end
 
-  #TODO make macro to generate is_windows based on drive_list
-  defp resolve_include(:macro_include_lib, "c:/" <> windows_abs_file,x,y) do
-    resolve_windows_include = fn (:macro_include_lib, drive, abs_file,_,_) ->
-      windows_abs_file = drive <> ":/" <> abs_file
-      windows_abs_file |>
-        File.exists?() |>
-        case do
-          true -> {:ok, windows_abs_file}
-          _ ->
-            {:error, {:not_found, windows_abs_file}}
-        end
-    end
-    resolve_windows_include.(:macro_include_lib, "c", windows_abs_file,x,y)
-  end
-
-  defp resolve_include(:macro_include_lib, ("/"<>_)=abs_file,_,_) do
+ defp resolve_include(:macro_include_lib, ("/"<>_)=abs_file,_,_) do
     case File.exists?(abs_file) do
       true -> {:ok, abs_file}
       _ ->
@@ -284,16 +270,38 @@ defmodule Quaff.Constants do
     end
   end
 
-  defp resolve_include(:macro_include_lib,file,_,_) do
-    [app_name|file_path] = :filename.split(String.to_charlist(file))
-    case :code.lib_dir(List.to_atom(app_name)) do
-      {:error, _} ->
-        {:error, {:not_found,file}}
-      app_lib ->
-        {:ok,List.to_string(:filename.join([app_lib|file_path]))}
+  defp resolve_include(:macro_include_lib, file,_,_) do
+    #TODO make macro to generate is_windows based on drive_list
+    is_window_file = fn (f) ->
+      f |>
+        case do
+          "c:/" <> _-> true
+          _ -> false
+        end
+    end
+
+    cond do
+      is_window_file.(file) ->
+        resolve_windows_include = fn (:macro_include_lib) ->
+          file |>
+            File.exists?() |>
+            case do
+              true -> {:ok, file}
+              _ ->
+                {:error, {:not_found, file}}
+            end
+        end
+        resolve_windows_include.(:macro_include_lib)
+      true ->
+        [app_name|file_path] = :filename.split(String.to_charlist(file))
+        case :code.lib_dir(List.to_atom(app_name)) do
+          {:error, _} ->
+            {:error, {:not_found,file}}
+          app_lib ->
+            {:ok,List.to_string(:filename.join([app_lib|file_path]))}
+        end
     end
   end
-
 
   defp resolve_include(:macro_include,file,rel,incl_path) do
     resolve_include(file,rel,incl_path)
