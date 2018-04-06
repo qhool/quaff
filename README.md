@@ -1,5 +1,5 @@
 [![Hex.pm](https://img.shields.io/hexpm/v/quaff.svg?style=flat-square)](https://hex.pm/packages/quaff) 
-[![Build Status](https://travis-ci.org/aruki-delivery/quaff.svg?branch=master)](https://travis-ci.org/aruki-delivery/quaff)
+[![Build Status](https://travis-ci.org/aruki-delivery/quaff.svg?branch=master)](https://travis-ci.org/github/aruki-delivery/quaff)
 [![Inline docs](http://inch-ci.org/github/cblage/elixir-json.svg?branch=develop)](http://inch-ci.org/aruki-delivery/quaff?branch=master)
 
 Quaff
