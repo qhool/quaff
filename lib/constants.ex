@@ -13,6 +13,7 @@
 # limitations under the License.
 defmodule Quaff.Constants do
   require Record
+  require Logger
 
   defmodule CompileError do
     defexception message: nil
@@ -242,12 +243,19 @@ defmodule Quaff.Constants do
     resolve_include(incl_type,List.to_string(file),rel,incl_path)
   end
 
-  defp resolve_include(:macro_include_lib, (c <>":/"<>_)=abs_file,_,_) when c in ["c","d", "e", "f"] do
-    case File.exists?(abs_file) do
-      true -> {:ok, abs_file}
-      _ ->
-        {:error, {:not_found,abs_file}}
+  #TODO make macro to generate is_windows based on drive_list
+  defp resolve_include(:macro_include_lib, "c:/" <> windows_abs_file,x,y) do
+    resolve_windows_include = fn (:macro_include_lib, drive, abs_file,_,_) ->
+      windows_abs_file = drive <> ":/" <> abs_file
+      windows_abs_file |>
+        File.exists?() |>
+        case do
+          true -> {:ok, windows_abs_file}
+          _ ->
+            {:error, {:not_found, windows_abs_file}}
+        end
     end
+    resolve_windows_include.(:macro_include_lib, "c", windows_abs_file,x,y)
   end
 
   defp resolve_include(:macro_include_lib, ("/"<>_)=abs_file,_,_) do

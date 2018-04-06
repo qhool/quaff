@@ -24,6 +24,8 @@ defmodule Quaff.Constants.Test do
   C.include_lib("../include/more_test.hrl")
   C.include_lib("./test1.hrl")
 
+  C.include_lib(Path.absname("#{__DIR__}/../include/more_test.hrl"))
+
 
 
   test "simple constants" do
