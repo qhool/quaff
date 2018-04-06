@@ -7,7 +7,7 @@ defmodule Quaff_013.Mixfile do
     [
       app: :quaff,
       elixir: "~> 1.6",
-      version: "0.1.3",
+      version: "1.0.0",
       deps: deps(Mix.env()),
       elixirc_options: elixirc_defaults ++ options(Mix.env()),
       dialyzer: [paths: ["_build/shared/lib/mqttex/ebin"]],
