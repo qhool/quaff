@@ -14,12 +14,13 @@ Installation
 
 Using [https://hex.pm/packages/quaff](hex.pm) (recommended way)
 
-Simply add ```{:quaff, "~> 0.1"}``` to your project's ```mix.exs``` file, in the dependencies list and run ```mix deps.get quaff```.
+Simply add ```{:quaff, "~> 1.0"}``` to your project's ```mix.exs``` file, in the dependencies list and run ```mix 
+deps.get quaff```.
 
 ### Example
 ```elixir
 defp deps do
-  [{:quaff, "~> 0.1"},]
+  [{:quaff, "~> 1.0"},]
 end
 ```
 
