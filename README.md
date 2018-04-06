@@ -36,8 +36,8 @@ app/include/app_header.hrl:
 lib/mymodule.ex:
 
     defmodule MyModule
-       require Quaff.Constants
-       Quaff.Constants.include_lib("app/include/app_header.hrl")
+       require Quaff
+       Quaff.include_lib("app/include/app_header.hrl")
 
        def myfunc() do
          @_CONSTANT_FROM_APP + 10

@@ -15,164 +15,18 @@ defmodule Quaff.Constants do
   require Record
   require Logger
 
-  defmodule CompileError do
-    defexception message: nil
-
-    def exception(opts) do
-      file = opts[:file] || "<unknown file>"
-      line = opts[:line] || -1
-      msg = opts[:message] || List.to_string(:io_lib.format(opts[:format], opts[:items]))
-      msg = msg <> List.to_string(:io_lib.format("~n  at ~s line ~p", [file, line]))
-      %__MODULE__{message: msg}
-    end
-  end
-
-  defmacro include(header) do
-    quote do
-      Quaff.Constants.include(unquote(header), [])
-    end
-  end
-
-  defmacro include(header, options) do
-    header =
-      cond do
-        :ok == Macro.validate(header) ->
-          {hd, []} = header |> Code.eval_quoted([], __CALLER__)
-          hd
-
-        true ->
-          header
-      end
-
-    use_constants = options[:constants] || :all
-    do_export = options[:export] || false
-
-    in_module =
-      options[:module] ||
-        Macro.expand(
-          quote do
-            __MODULE__
-          end,
-          __CALLER__
-        )
-
-    rel_dir =
-      cond do
-        options[:relative_to] && :ok == Macro.validate(options[:relative_to]) ->
-          {rel_to, []} = options[:relative_to] |> Code.eval_quoted([], __CALLER__)
-          rel_to
-
-        options[:relative_to] ->
-          options[:relative_to]
-
-        true ->
-          Macro.expand(
-            quote do
-              __DIR__
-            end,
-            __CALLER__
-          )
-      end
-
-    inc_dir =
-      cond do
-        options[:include] && :ok == Macro.validate(options[:include]) ->
-          {inc, []} = options[:include] |> Code.eval_quoted([], __CALLER__)
-          inc
-
-        options[:include] ->
-          options[:include]
-
-        true ->
-          [
-            Macro.expand(
-              quote do
-                __DIR__
-              end,
-              __CALLER__
-            )
-          ]
-      end
-
-    options = Keyword.put(options, :module, in_module)
-    options = Keyword.put(options, :relative_to, rel_dir)
-    options = Keyword.put(options, :include, inc_dir)
-
-    const =
-      Enum.map(get_constants(header, options), fn {c, v} ->
-        {normalize_const(c), v}
-      end)
-
-    const =
-      case use_constants do
-        :all ->
-          const
-
-        _ ->
-          Enum.map(List.wrap(use_constants), fn c ->
-            c = normalize_const(c)
-            {c, Keyword.fetch!(const, c)}
-          end)
-      end
-
-    attrs =
-      Enum.map(const, fn {c, val} ->
-        quote do
-          Module.put_attribute(__MODULE__, unquote(c), unquote(Macro.escape(val)))
-        end
-      end)
-
-    funs =
-      case do_export do
-        true ->
-          Enum.map(const, fn {c, _} ->
-            {:ok, ident} = Code.string_to_quoted(Atom.to_string(c))
-
-            quote do
-              def unquote(ident) do
-                @unquote ident
-              end
-            end
-          end)
-
-        _ ->
-          []
-      end
-
-    attrs ++ funs
-  end
-
-  defmacro include_lib(header) do
-    quote do
-      Quaff.Constants.include_lib(unquote(header), [])
-    end
-  end
-
-  defmacro include_lib(header, options) do
-    opts =
-      options
-      |> Macro.expand_once(__CALLER__)
-      |> Keyword.put(:include_lib, true)
-
-    quote do
-      Quaff.Constants.include(unquote(header), unquote(opts))
-    end
-  end
-
-  defp normalize_const(a) when is_atom(a) do
+  def normalize_const(a) when is_atom(a) do
     normalize_const(Atom.to_string(a))
   end
 
-  defp normalize_const(name) do
-    c = String.first(name)
-
-    normed_str =
-      case String.upcase(c) do
+  def normalize_const(name) do
+    (c = name |> String.first()) |>
+      String.upcase() |>
+      case do
         ^c -> "_" <> name
         _ -> name
-      end
-
-    String.to_atom(normed_str)
+      end |>
+      String.to_atom()
   end
 
   def get_constants(header_file) do
@@ -272,7 +126,7 @@ defmodule Quaff.Constants do
 
         {:error, {:not_found, _}} ->
           raise(
-            CompileError,
+            Quaff.CompileError,
             format: "Can't locate header ~s~n relative to: ~s~n include path was: ~p",
             items: [header_file, relative_dir, include_path],
             file: from_file,
@@ -287,7 +141,7 @@ defmodule Quaff.Constants do
 
         {:error, reason} ->
           raise(
-            CompileError,
+            Quaff.CompileError,
             format: "Error reading ~s: ~p",
             items: [realfile, reason],
             file: from_file,

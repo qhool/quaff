@@ -2,7 +2,7 @@ defmodule Quaff.Debug.Test do
   use ExUnit.Case
 
   require Quaff.Debug
-  require Quaff.Constants
+  require Quaff
   alias Quaff.Debug, as: Dbg
 
   setup context do
