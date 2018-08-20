@@ -1,26 +1,43 @@
 defmodule Quaff.Constants.Test do
   use ExUnit.Case
 
-  require Quaff.Constants
-  alias Quaff.Constants, as: C
+  require Quaff
 
-  #simple test headers
-  C.include("test1.hrl", export: true)
-  C.include("test2.hrl")
-  C.include("test3_inc.hrl")
-  #include various headers from otp, to sanity check basic parsing
-  C.include_lib("eunit/include/eunit.hrl")
-  C.include_lib("stdlib/include/erl_bits.hrl")
-  C.include_lib("stdlib/include/erl_compile.hrl")
-  C.include_lib("kernel/include/file.hrl")
-  #these files include others:
-  C.include_lib("snmp/include/snmp_tables.hrl")
-  C.include_lib("inets/include/httpd.hrl")
-  C.include_lib("public_key/include/public_key.hrl")
+  # simple test headers
+  Quaff.include("test1.hrl", export: true)
+  Quaff.include("test2.hrl")
+  Quaff.include("test3_inc.hrl")
+  # include various headers from otp, to sanity check basic parsing
+  Quaff.include_lib("eunit/include/eunit.hrl")
+  Quaff.include_lib("stdlib/include/erl_bits.hrl")
+  Quaff.include_lib("stdlib/include/erl_compile.hrl")
+  Quaff.include_lib("kernel/include/file.hrl")
+  # these files include others:
+  Quaff.include_lib("snmp/include/snmp_tables.hrl")
+  Quaff.include_lib("inets/include/httpd.hrl")
+  # C.include_lib("/public_key.hrl")
+  Quaff.include_lib("public_key/include/public_key.hrl")
+
+  # relative paths
+  Quaff.include_lib(
+    Path.expand("#{__DIR__}/../include/more_test.hrl"),
+    include: Path.expand("#{__DIR__}/../include/")
+  )
+
+  Quaff.include_lib("../include/more_test.hrl")
+  Quaff.include_lib("./test1.hrl")
+
+  Quaff.include_lib(Path.absname("#{__DIR__}/../include/more_test.hrl"))
 
   test "simple constants" do
     assert @_SIMPLE_1 == 1
     assert @simple_2 == 2
+    assert @_MM == 'Elixir.Quaff.Constants.Test'
+  end
+
+  test "dynamic path constants" do
+    assert @_SIMPLE_3 == 3
+    assert @simple_4 == 4
     assert @_MM == 'Elixir.Quaff.Constants.Test'
   end
 
