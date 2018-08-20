@@ -15,6 +15,8 @@ defmodule Quaff.Constants do
   require Record
   require Logger
 
+  Record.defrecordp(:qc_ctx, [:defs, :files, :relative_dirs, :includes, :do_macros])
+
   def normalize_const(a) when is_atom(a) do
     normalize_const(Atom.to_string(a))
   end
@@ -58,7 +60,7 @@ defmodule Quaff.Constants do
         from_line: -1
       )
 
-    ctx = init_ctx(in_module, abs_header, include_dirs)
+    ctx = init_ctx(in_module, abs_header, include_dirs, options)
     defs = find_defns(tree, ctx)
 
     Enum.flat_map(defs, fn {macro, all_arity} ->
@@ -78,17 +80,20 @@ defmodule Quaff.Constants do
   defp parse_constant(defn) do
     case :erl_parse.parse_exprs(defn ++ [{:dot, 0}]) do
       {:ok, exprs} ->
-        case :erl_eval.exprs(exprs, []) do
-          {:value, val, _} ->
-            case has_funs?(val) do
-              true -> nil
-              _ -> val
-            end
+        eval_constants(exprs)
 
-          _ ->
-            nil
+      _ ->
+        nil
+    end
+  end
+
+  defp eval_constants(exprs) do
+    case :erl_eval.exprs(exprs, []) do
+      {:value, val, _} ->
+        case has_funs?(val) do
+          true -> nil
+          _ -> val
         end
-
       _ ->
         nil
     end
@@ -374,6 +379,11 @@ defmodule Quaff.Constants do
     find_defns(tree, put_def(ctx, {name, 0}, {[], expanded}))
   end
 
+  defp find_defns([{:macro_define, {_, _, _name}, _args, _toks} | tree], qc_ctx(do_macros: false)=ctx) do
+    # Ignore `defines` with args
+    find_defns( tree, ctx )
+  end
+
   defp find_defns([{:macro_define, {_, _, name}, args, toks} | tree], ctx) do
     expanded = expand_nested(toks, ctx)
 
@@ -453,20 +463,19 @@ defmodule Quaff.Constants do
     Enum.reverse(out)
   end
 
-  Record.defrecordp(:qc_ctx, [:defs, :files, :relative_dirs, :includes])
-
   ## defs dictionary:
-  defp init_ctx() do
-    qc_ctx(defs: Map.new(), files: [], relative_dirs: [], includes: [])
+  defp init_ctx(options) do
+    do_macros = Keyword.get(options, :macros, true)
+    qc_ctx(defs: Map.new(), files: [], relative_dirs: [], includes: [], do_macros: do_macros)
   end
 
-  defp init_ctx(module, file, incls) do
+  defp init_ctx(module, file, incls, options) do
     defs = [
       {{:MODULE, 0}, {[], [{:atom, {1, 1}, module}]}},
       {{:MODULE_STRING, 0}, {[], [{:string, {1, 1}, Atom.to_charlist(module)}]}}
     ]
 
-    ctx = qc_ctx(init_ctx(), includes: incls)
+    ctx = qc_ctx(init_ctx(options), includes: incls)
     put_defs(push_file(ctx, file), defs)
   end
 
