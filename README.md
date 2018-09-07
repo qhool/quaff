@@ -12,7 +12,7 @@ All contributions are welcome.
 Installation
 =====
 
-Using [https://hex.pm/packages/quaff](hex.pm) (recommended way)
+Using [hex.pm](https://hex.pm/packages/quaff) (recommended way)
 
 Simply add ```{:quaff, "~> 1.0"}``` to your project's ```mix.exs``` file, in the dependencies list and run ```mix 
 deps.get quaff```.
