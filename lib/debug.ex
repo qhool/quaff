@@ -1,4 +1,4 @@
-# Copyright 2014 Josh Burroughs <josh@qhool.com>
+# Copyright 2014-2024 Josh Burroughs <josh@qhool.com>
 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -53,11 +53,11 @@ defmodule Quaff.Debug do
     call_i({module,compiled_src,beam_file,beam_bin},options)
   end
   defp load_ex(src, options) when is_binary(src) do
-    mods = Code.load_file(src)
+    mods = Code.compile_file(src)
     Enum.map(mods,
              fn({mod,beam_bin}) ->
-                 call_i({mod,String.to_char_list(src),
-                         Atom.to_char_list(mod)++'.beam',beam_bin},options)
+                 call_i({mod,String.to_charlist(src),
+                         Atom.to_charlist(mod)++'.beam',beam_bin},options)
              end)
   end
   defp call_i(arg,options) do
