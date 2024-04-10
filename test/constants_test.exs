@@ -24,11 +24,11 @@ defmodule Quaff.Constants.Test do
     assert @_MM == 'Elixir.Quaff.Constants.Test'
   end
 
-  # test "constant exporting" do
-  #   assert _SIMPLE_1 == @_SIMPLE_1
-  #   assert simple_2 == @simple_2
-  #   assert _MM == @_MM
-  # end
+  test "constant exporting" do
+    assert @_SIMPLE_1 == __MODULE__._SIMPLE_1
+    assert @simple_2 == __MODULE__.simple_2
+    assert @_MM == __MODULE__._MM
+  end
 
   test "includes, ifdef, clobbering" do
     assert @_TEST3 == :test_3_a
